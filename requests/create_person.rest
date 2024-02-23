@@ -1,0 +1,7 @@
+POST http://127.0.0.1:3001/api/persons HTTP/1.1
+content-type: application/json
+
+{
+    "name": "albi",
+    "number": "0000005"
+}

@@ -1,0 +1,5 @@
+###
+GET http://127.0.0.1:3001/api/phonebook
+###
+GET http://127.0.0.1:3001/api/phonebook/1
+###
