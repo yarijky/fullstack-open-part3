@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const morgan = require('morgan')
+const cors = require('cors')
 
+app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
 
@@ -33,11 +35,6 @@ let phonebook = [
     name: "Mary Poppendieck",
     number: "39-23-6423122",
   },
-  {
-    id: 5,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
 ];
 
 app.get("/", (request, response) => {
@@ -63,9 +60,8 @@ const generateId = () => {
   return Math.floor(Math.random() * 9999999)
 };
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/phonebook", (request, response) => {
   const body = request.body;
-  console.log(request.body)
 
   if (!body.name) {
     return response.status(400).json({
@@ -93,12 +89,12 @@ app.post("/api/persons", (request, response) => {
   };
 
   phonebook = phonebook.concat(person);
-  response.json(body);
+  response.json(person);
 });
 
 app.delete("/api/phonebook/:id", (request, response) => {
   const id = Number(request.params.id);
-  person = phonebook.filter((person) => person.id !== id);
+  phonebook = phonebook.filter((person) => person.id !== id);
 
   response.status(204).end();
 });
