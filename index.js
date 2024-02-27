@@ -9,6 +9,8 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message);
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
   next(error);
 };
@@ -47,40 +49,30 @@ app.get("/api/phonebook/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/phonebook", (request, response) => {
+app.post("/api/phonebook", (request, response, next) => {
   const body = request.body;
-
-  if (!body.name) {
-    return response.status(400).json({
-      error: "name missing",
-    });
-  }
-
-  if (!body.number) {
-    return response.status(400).json({
-      error: "number missing",
-    });
-  }
 
   const phonebook = new Phonebook({
     name: body.name,
     number: body.number,
   });
 
-  phonebook.save().then((savedPerson) => {
-    response.json(savedPerson);
-  });
+  phonebook
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/phonebook/:id", (request, response, next) => {
-  const body = request.body;
+  const { name, number } = request.body;
 
-  const phonebook = {
-    name: body.name,
-    number: body.number,
-  };
-
-  Phonebook.findByIdAndUpdate(request.params.id, phonebook, { new: true })
+  Phonebook.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updatedPhonebook) => {
       response.json(updatedPhonebook);
     })

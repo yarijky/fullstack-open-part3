@@ -1,8 +1,8 @@
 ###
-POST http://127.0.0.1:3001/api/persons HTTP/1.1
+POST http://127.0.0.1:3001/api/phonebook HTTP/1.1
 content-type: application/json
 
 {
-    "name": "albi",
+    "name": "a",
     "number": "0000005"
 }
